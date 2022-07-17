@@ -1,0 +1,29 @@
+version: "3.9"
+
+services:
+  db:
+    container_name: db
+    image: postgres
+    volumes:
+      - ./db/postgres/data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+  app:
+    container_name: app
+    image: python:3.10
+    working_dir: /app
+    entrypoint:  ["bash", "start.sh"]
+    volumes:
+      - ./app:/app
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - POSTGRES_NAME=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - PYTHONUNBUFFERED=1
+    depends_on:
+      - db
