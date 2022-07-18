@@ -23,10 +23,11 @@ services:
     restart: unless-stopped
     ports:
       - "8000:8000"
+      - "5678:5678"
+    env_file:
+      - ./.env
     environment:
-      - POSTGRES_NAME=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
       - PYTHONUNBUFFERED=1
+      - REMOTE_DEBUGGER=1
     depends_on:
       - db
