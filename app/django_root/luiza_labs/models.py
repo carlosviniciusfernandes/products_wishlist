@@ -10,4 +10,4 @@ class Product:
     image: str
     brand: str
     title: str
-    reviewScore: Optional[float]
+    reviewScore: Optional[float] = None

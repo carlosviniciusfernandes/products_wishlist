@@ -1,6 +1,7 @@
 # Django's framework
 Django>=4.0
 psycopg2>=2.8
+requests
 
 
 # Lyting and debugging
