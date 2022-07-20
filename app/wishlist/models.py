@@ -8,7 +8,7 @@ from luiza_labs.models import Product
 
 class Wishlist(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    product_id = models.CharField(unique=True, null=False)
+    product_id = models.CharField(unique=True, null=False, max_length=256)
 
     _product_data: Optional[Product] = None
 
