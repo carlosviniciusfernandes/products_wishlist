@@ -5,6 +5,8 @@ from django.db import models
 from luiza_labs.client import LuizaLabsClient
 from luiza_labs.models import Product
 
+PRODUCT_API = LuizaLabsClient()
+
 
 class Wishlist(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -12,17 +14,18 @@ class Wishlist(models.Model):
 
     _product_data: Optional[Product] = None
 
-    def __init__(self, *args, **kwargs) -> None:
+    @staticmethod
+    def _get_product_data(product_id: str) -> Product:
+        return PRODUCT_API.retrieve_product_details(product_id)
+
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.client: Optional[LuizaLabsClient] = kwargs.get('client')
+        self._product_data = self._get_product_data(self.product_id)
 
     @property
     def product_data(self):
-        if self.client:
-            self._product_data = self.client.retrieve_product_details(self.id)
-
-        return self._product_data
+        return self._get_product_data(self.product_id)
 
     class Meta:
         db_table = 'wishlist'
