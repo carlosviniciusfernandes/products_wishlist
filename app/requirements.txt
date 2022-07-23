@@ -1,10 +1,16 @@
 # Django's framework
 Django>=4.0
 psycopg2>=2.8
-requests
 
+# Django Rest Framework
+djangorestframework
+markdown
+django-filter
 
 # Lyting and debugging
 pylama
 ptvsd
 ipython
+
+# Others
+requests
