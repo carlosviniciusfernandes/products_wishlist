@@ -22,7 +22,7 @@ class LuizaLabsClient:
         session.headers.update(headers)
         self.session = session
 
-    def __enter__(self):
+    def __enter__(self):  # TODO compose this in a request context manger class
         ...
 
     def __exit__(self, exc_type, exc_val, tracaback):
