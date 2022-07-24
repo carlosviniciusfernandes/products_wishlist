@@ -7,6 +7,9 @@ djangorestframework
 markdown
 django-filter
 
+# Django Rest Auth
+dj-rest-auth
+
 # Lyting and debugging
 pylama
 ptvsd
