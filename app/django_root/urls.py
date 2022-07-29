@@ -15,10 +15,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
+from wishlist.urls import router as wishlist_router
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
-    path('auth/', include('dj_rest_auth.urls')),
-    path('wishlist/', include('wishlist.urls')),
+    path('auth/', include('dj_rest_auth.urls'))
 ]
+
+urlpatterns += wishlist_router.urls
