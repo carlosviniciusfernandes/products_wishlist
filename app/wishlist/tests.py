@@ -1,6 +1,9 @@
+from unittest.mock import Mock, patch
+
 from django.contrib.auth import get_user_model
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient, APITestCase
+from wishlist.models import PRODUCT_API
 
 User = get_user_model()
 
@@ -20,7 +23,6 @@ def get_user_token(user: User) -> Token.key:
 
 class TestWishlist(APITestCase):
 
-    # TODO Mock the  PRODUCT_API.retrieve_product_details(product_id)
     @classmethod
     def setUpClass(cls):
         cls.client = APIClient()
@@ -30,8 +32,10 @@ class TestWishlist(APITestCase):
         }
         return super().setUpClass()
 
-    def test_add_product_to_user_wishlist_success(self):
+    @patch.object(PRODUCT_API, 'retrieve_product_details')
+    def test_add_product_to_user_wishlist_success(self, mock_get_product_data: Mock):
         product_id = '1bf0f365-fbdd-4e21-9786-da459d78dd1f'
+        mock_get_product_data.return_value = Mock(product_id=product_id)
 
         response = self.client.post(
             '/wishlist',
