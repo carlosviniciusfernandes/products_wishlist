@@ -21,7 +21,7 @@ class WishlistViewSet(ModelViewSet):
     serializer_class = WishlistSerializer
 
     def create(self, request):
-        user = User.objects.get(id=1)
+        user = request.user
         serializer: WishlistSerializer = self.get_serializer(
             data={'user': user.id, 'product_id': request.data.get('product_id')}
         )
