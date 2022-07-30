@@ -9,7 +9,7 @@ class WishlistSerializer(ModelSerializer):
             Wishlist._get_product_data(value)
             return value
         except Exception:
-            raise ValidationError('Could not validate product id')
+            raise ValidationError('Could not validate product id.')
 
     class Meta:
         model = Wishlist
