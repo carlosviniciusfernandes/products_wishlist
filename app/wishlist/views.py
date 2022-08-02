@@ -28,3 +28,6 @@ class WishlistViewSet(ModelViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.create(serializer.validated_data)
         return Response(None, status=status.HTTP_201_CREATED)
+
+    # TODO either overwrite the initial queryset to filter user_id
+    # or do it in the serializer

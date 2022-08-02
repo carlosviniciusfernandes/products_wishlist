@@ -12,6 +12,9 @@ class Wishlist(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     product_id = models.CharField(unique=True, null=False, max_length=256)
 
+    # TODO make user_id and product_id unique together
+    # (currently only product_id is unique, which is problem to add the same item do another user wishlist)
+
     _product_data: Optional[Product] = None
 
     @staticmethod
