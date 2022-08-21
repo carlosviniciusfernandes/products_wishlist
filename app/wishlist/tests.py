@@ -3,7 +3,7 @@ from unittest.mock import Mock, patch
 from django.contrib.auth import get_user_model
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient, APITestCase
-from wishlist.models import Wishlist, PRODUCT_API
+from wishlist.models import PRODUCT_API, Wishlist
 
 User = get_user_model()
 
@@ -117,6 +117,31 @@ class TestWishlist(APITestCase):
         wishlist_item = Wishlist.objects.create(user=other_user, product_id=product_id)
 
         response = self.client.get(
+            f'/wishlist/{wishlist_item.id}',
+            format='json',
+            **self.headers
+        )
+
+        self.assertEqual(response.status_code, 404)
+
+    def test_delete_user_wishlist_item_success(self, *args):
+        product_id = '1bf0f365-fbdd-4e21-9786-da459d78dd1f'
+        wishlist_item = Wishlist.objects.create(user=self.user, product_id=product_id)
+
+        response = self.client.delete(
+            f'/wishlist/{wishlist_item.id}',
+            format='json',
+            **self.headers
+        )
+
+        self.assertEqual(response.status_code, 204)
+
+    def test_delete_user_wishlist_item_error__not_found(self, *args):
+        other_user = create_test_user('other_test_user')
+        product_id = '1bf0f365-fbdd-4e21-9786-da459d78dd1f'
+        wishlist_item = Wishlist.objects.create(user=other_user, product_id=product_id)
+
+        response = self.client.delete(
             f'/wishlist/{wishlist_item.id}',
             format='json',
             **self.headers
