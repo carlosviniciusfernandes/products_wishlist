@@ -104,7 +104,7 @@ class TestWishlist(APITestCase):
         )
 
         expected_data = {
-            'id': {wishlist_item.id},
+            'id': wishlist_item.id,
             'product_id': f'{wishlist_item.product_id}'
         }
 

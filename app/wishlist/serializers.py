@@ -13,6 +13,11 @@ class WishlistSerializer(ModelSerializer):
         except Exception:
             raise ValidationError('Could not validate product id.')
 
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data.pop('user')
+        return data
+
     class Meta:
         model = Wishlist
         fields = '__all__'
