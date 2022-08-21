@@ -60,7 +60,7 @@ class TestWishlist(APITestCase):
         )
 
         self.assertEqual(response.status_code, 400)
-        self.assertIn('wishlist with this product id already exists.', response.json().get('product_id'))
+        self.assertIn('User already have a wishlist item with this product id.', str(response.data))
 
     @patch.object(PRODUCT_API, 'retrieve_product_details')
     def test_add_product_to_user_wishlist_error__invalid_product(self, mock_get_product_data: Mock):

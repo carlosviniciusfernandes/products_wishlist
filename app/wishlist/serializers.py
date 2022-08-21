@@ -1,4 +1,6 @@
-from rest_framework.serializers import ModelSerializer, ValidationError
+from rest_framework.serializers import (ModelSerializer,
+                                        UniqueTogetherValidator,
+                                        ValidationError)
 from wishlist.models import Wishlist
 
 
@@ -14,3 +16,11 @@ class WishlistSerializer(ModelSerializer):
     class Meta:
         model = Wishlist
         fields = '__all__'
+
+        validators = [
+            UniqueTogetherValidator(
+                queryset=model.objects.all(),
+                fields=('user', 'product_id'),
+                message="User already have a wishlist item with this product id."
+            )
+        ]
