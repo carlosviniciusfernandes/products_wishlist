@@ -8,10 +8,10 @@ from wishlist.models import Wishlist, PRODUCT_API
 User = get_user_model()
 
 
-def create_test_user() -> User:
+def create_test_user(username: str ='test_user') -> User:
     user = User.objects.create(
-        username='test_user',
-        email='test_user@test.com',
+        username=username,
+        email=f'{username}@test.com',
     )
     return user
 
@@ -21,6 +21,7 @@ def get_user_token(user: User) -> Token.key:
     return f"Token {token.key}"
 
 
+@patch.object(PRODUCT_API, 'retrieve_product_details')
 class TestWishlist(APITestCase):
 
     @classmethod
@@ -32,7 +33,6 @@ class TestWishlist(APITestCase):
         }
         return super().setUpClass()
 
-    @patch.object(PRODUCT_API, 'retrieve_product_details')
     def test_add_product_to_user_wishlist_success(self, mock_get_product_data: Mock):
         product_id = '1bf0f365-fbdd-4e21-9786-da459d78dd1f'
         mock_get_product_data.return_value = Mock(product_id=product_id)
@@ -46,11 +46,9 @@ class TestWishlist(APITestCase):
 
         self.assertEqual(response.status_code, 201)
 
-    @patch.object(PRODUCT_API, 'retrieve_product_details')
     def test_add_product_to_user_wishlist_error__product_already_in_list(self, mock_get_product_data: Mock):
         product_id = '1bf0f365-fbdd-4e21-9786-da459d78dd1f'
         Wishlist.objects.create(user=self.user, product_id=product_id)
-        mock_get_product_data.return_value = Mock(product_id=product_id)
 
         response = self.client.post(
             '/wishlist',
@@ -62,7 +60,6 @@ class TestWishlist(APITestCase):
         self.assertEqual(response.status_code, 400)
         self.assertIn('User already have a wishlist item with this product id.', str(response.data))
 
-    @patch.object(PRODUCT_API, 'retrieve_product_details')
     def test_add_product_to_user_wishlist_error__invalid_product(self, mock_get_product_data: Mock):
         product_id = 'random_invalid_product_id'
         mock_get_product_data.side_effect = Exception
@@ -77,9 +74,25 @@ class TestWishlist(APITestCase):
         self.assertEqual(response.status_code, 400)
         self.assertIn('Could not validate product id.', response.json().get('product_id'))
 
-    def test_get_user_wishlist(self):
-        pass
+    def test_get_user_wishlist(self, mock_get_product_data: Mock):
+        other_user = create_test_user('other_test_user')
+        product_ids = ['1bf0f365-fbdd-4e21-9786-da459d78dd1f', '6a512e6c-6627-d286-5d18-583558359ab6']
+        for id in product_ids:
+            # Add item to test user wishlist
+            Wishlist.objects.create(user=self.user, product_id=id)
+            # Add item to other user wishlist , should not return together with test user items
+            Wishlist.objects.create(user=other_user, product_id=id)
 
-    def test_get_user_wishlist_item(self):
+        response = self.client.get(
+            '/wishlist',
+            format='json',
+            **self.headers
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.data), 2) # only test user wishlist items
+        self.assertEqual(Wishlist.objects.all().count(), 4) # All wishlist items
+
+    def test_get_user_wishlist_item(self, mock_get_product_data: Mock):
         # sub test for item with review
         pass

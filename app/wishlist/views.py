@@ -20,6 +20,9 @@ class WishlistViewSet(ModelViewSet):
     queryset = Wishlist.objects.all()
     serializer_class = WishlistSerializer
 
+    def get_queryset(self):
+        return self.queryset.filter(user=self.request.user)
+
     def create(self, request):
         user = request.user
         serializer: WishlistSerializer = self.get_serializer(
@@ -28,6 +31,3 @@ class WishlistViewSet(ModelViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.create(serializer.validated_data)
         return Response(None, status=status.HTTP_201_CREATED)
-
-    # TODO either overwrite the initial queryset to filter user_id
-    # or do it in the serializer
