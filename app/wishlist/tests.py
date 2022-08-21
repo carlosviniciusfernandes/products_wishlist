@@ -94,5 +94,32 @@ class TestWishlist(APITestCase):
         self.assertEqual(Wishlist.objects.all().count(), 4) # All wishlist items
 
     def test_get_user_wishlist_item(self, mock_get_product_data: Mock):
-        # sub test for item with review
-        pass
+        product_id = '1bf0f365-fbdd-4e21-9786-da459d78dd1f'
+        wishlist_item = Wishlist.objects.create(user=self.user, product_id=product_id)
+
+        response = self.client.get(
+            f'/wishlist/{wishlist_item.id}',
+            format='json',
+            **self.headers
+        )
+
+        expected_data = {
+            'id': {wishlist_item.id},
+            'product_id': f'{wishlist_item.product_id}'
+        }
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data, expected_data)
+
+    def test_get_user_wishlist_item_error__not_found(self, mock_get_product_data: Mock):
+        other_user = create_test_user('other_test_user')
+        product_id = '1bf0f365-fbdd-4e21-9786-da459d78dd1f'
+        wishlist_item = Wishlist.objects.create(user=other_user, product_id=product_id)
+
+        response = self.client.get(
+            f'/wishlist/{wishlist_item.id}',
+            format='json',
+            **self.headers
+        )
+
+        self.assertEqual(response.status_code, 404)
