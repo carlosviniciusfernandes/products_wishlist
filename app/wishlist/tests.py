@@ -148,3 +148,23 @@ class TestWishlist(APITestCase):
         )
 
         self.assertEqual(response.status_code, 404)
+
+    def test_update_wishlist_item_not_allowed(self, *args):
+        response = self.client.put(
+            f'/wishlist/random_id',
+            format='json',
+            data={'random_data': 'to be updated'},
+            **self.headers
+        )
+
+        self.assertEqual(response.status_code, 405)
+
+    def test_partial_update_wishlist_item_not_allowed(self, *args):
+        response = self.client.patch(
+            f'/wishlist/random_id',
+            format='json',
+            data={'random_data': 'to be partially updated'},
+            **self.headers
+        )
+
+        self.assertEqual(response.status_code, 405)

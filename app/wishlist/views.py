@@ -31,3 +31,9 @@ class WishlistViewSet(ModelViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.create(serializer.validated_data)
         return Response(None, status=status.HTTP_201_CREATED)
+
+    def update(self, *args, **kwargs):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def patch(self, *args, **kwargs):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
