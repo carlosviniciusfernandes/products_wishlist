@@ -1,26 +1,27 @@
-from rest_framework.serializers import (ModelSerializer,
+from rest_framework.serializers import (ModelSerializer, SerializerMethodField,
                                         UniqueTogetherValidator,
                                         ValidationError)
 from wishlist.models import Wishlist
 
 
 class WishlistSerializer(ModelSerializer):
+    product = SerializerMethodField()
 
-    def validate_product_id(self, value):
+    def validate_product_id(self, value: str):
         try:
             Wishlist._get_product_data(value)
             return value
         except Exception:
             raise ValidationError('Could not validate product id.')
 
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
-        data.pop('user')
-        return data
+    def get_product(self, instance: Wishlist) -> dict:
+        return instance.product_data.__dict__
 
     class Meta:
         model = Wishlist
         fields = '__all__'
+
+        extra_kwargs = {'user': {'write_only': True}}
 
         validators = [
             UniqueTogetherValidator(

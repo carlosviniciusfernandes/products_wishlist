@@ -24,6 +24,17 @@ def get_user_token(user: User) -> Token.key:
 @patch.object(PRODUCT_API, 'retrieve_product_details')
 class TestWishlist(APITestCase):
 
+    product_id = '1bf0f365-fbdd-4e21-9786-da459d78dd1f'
+
+    product_data = {
+        "price": 1699.0,
+        "image": "http://challenge-api.luizalabs.com/images/1bf0f365-fbdd-4e21-9786-da459d78dd1f.jpg",
+        "brand": "bébé confort",
+        "id": "1bf0f365-fbdd-4e21-9786-da459d78dd1f",
+        "title": "Cadeira para Auto Iseos Bébé Confort Earth Brown",
+        "reviewScore": 3.98
+    }
+
     @classmethod
     def setUpClass(cls):
         cls.client = APIClient()
@@ -34,7 +45,7 @@ class TestWishlist(APITestCase):
         return super().setUpClass()
 
     def test_add_product_to_user_wishlist_success(self, mock_get_product_data: Mock):
-        product_id = '1bf0f365-fbdd-4e21-9786-da459d78dd1f'
+        product_id = self.product_id
         mock_get_product_data.return_value = Mock(product_id=product_id)
 
         response = self.client.post(
@@ -47,7 +58,7 @@ class TestWishlist(APITestCase):
         self.assertEqual(response.status_code, 201)
 
     def test_add_product_to_user_wishlist_error__product_already_in_list(self, mock_get_product_data: Mock):
-        product_id = '1bf0f365-fbdd-4e21-9786-da459d78dd1f'
+        product_id = self.product_id
         Wishlist.objects.create(user=self.user, product_id=product_id)
 
         response = self.client.post(
@@ -74,14 +85,29 @@ class TestWishlist(APITestCase):
         self.assertEqual(response.status_code, 400)
         self.assertIn('Could not validate product id.', response.json().get('product_id'))
 
-    def test_get_user_wishlist(self, mock_get_product_data: Mock):
+    def test_get_user_wishlist__empty_list(self, mock_get_product_data: Mock):
+        response = self.client.get(
+            '/wishlist',
+            format='json',
+            **self.headers
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.data), 0)
+
+    def test_get_user_wishlist__list_has_only_current_user_items(self, mock_get_product_data: Mock):
+        product_id = self.product_id
+        other_product_id = '6a512e6c-6627-d286-5d18-583558359ab6'
+        another_product_id = '4bd442b1-4a7d-2475-be97-a7b22a08a024'
+        mock_get_product_data.return_value.__dict__ = {}
+
+        # Add item to test user wishlist
+        Wishlist.objects.create(user=self.user, product_id=product_id)
+        Wishlist.objects.create(user=self.user, product_id=other_product_id)
+
+        # Add item to other user wishlist , should not return together with test user items
         other_user = create_test_user('other_test_user')
-        product_ids = ['1bf0f365-fbdd-4e21-9786-da459d78dd1f', '6a512e6c-6627-d286-5d18-583558359ab6']
-        for id in product_ids:
-            # Add item to test user wishlist
-            Wishlist.objects.create(user=self.user, product_id=id)
-            # Add item to other user wishlist , should not return together with test user items
-            Wishlist.objects.create(user=other_user, product_id=id)
+        Wishlist.objects.create(user=other_user, product_id=another_product_id)
 
         response = self.client.get(
             '/wishlist',
@@ -90,11 +116,19 @@ class TestWishlist(APITestCase):
         )
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.data), 2) # only test user wishlist items
-        self.assertEqual(Wishlist.objects.all().count(), 4) # All wishlist items
 
-    def test_get_user_wishlist_item(self, mock_get_product_data: Mock):
-        product_id = '1bf0f365-fbdd-4e21-9786-da459d78dd1f'
+        # only test user wishlist items
+        self.assertEqual(len(response.data), 2)
+        self.assertEqual([item.get('product_id') for item in response.data], [product_id, other_product_id])
+
+        # All wishlist items
+        self.assertEqual(Wishlist.objects.all().count(), 3)
+
+
+    def test_get_user_wishlist_item_success(self, mock_get_product_data: Mock):
+        product_id = self.product_id
+        mock_get_product_data.return_value.__dict__ = self.product_data
+
         wishlist_item = Wishlist.objects.create(user=self.user, product_id=product_id)
 
         response = self.client.get(
@@ -105,7 +139,8 @@ class TestWishlist(APITestCase):
 
         expected_data = {
             'id': wishlist_item.id,
-            'product_id': f'{wishlist_item.product_id}'
+            'product_id': f'{wishlist_item.product_id}',
+            'product': self.product_data
         }
 
         self.assertEqual(response.status_code, 200)
@@ -113,7 +148,7 @@ class TestWishlist(APITestCase):
 
     def test_get_user_wishlist_item_error__not_found(self, mock_get_product_data: Mock):
         other_user = create_test_user('other_test_user')
-        product_id = '1bf0f365-fbdd-4e21-9786-da459d78dd1f'
+        product_id = self.product_id
         wishlist_item = Wishlist.objects.create(user=other_user, product_id=product_id)
 
         response = self.client.get(
@@ -125,7 +160,7 @@ class TestWishlist(APITestCase):
         self.assertEqual(response.status_code, 404)
 
     def test_delete_user_wishlist_item_success(self, *args):
-        product_id = '1bf0f365-fbdd-4e21-9786-da459d78dd1f'
+        product_id = self.product_id
         wishlist_item = Wishlist.objects.create(user=self.user, product_id=product_id)
 
         response = self.client.delete(
@@ -138,7 +173,7 @@ class TestWishlist(APITestCase):
 
     def test_delete_user_wishlist_item_error__not_found(self, *args):
         other_user = create_test_user('other_test_user')
-        product_id = '1bf0f365-fbdd-4e21-9786-da459d78dd1f'
+        product_id = self.product_id
         wishlist_item = Wishlist.objects.create(user=other_user, product_id=product_id)
 
         response = self.client.delete(
