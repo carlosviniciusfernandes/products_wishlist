@@ -1,24 +1,22 @@
 from django.contrib.auth import get_user_model
 from rest_framework import status
+from django_filters import rest_framework as filters
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from wishlist.models import Wishlist
 from wishlist.serializers import WishlistSerializer
 
 User = get_user_model()
-"""
-O dispositivo que irá renderizar a resposta fornecida por essa nova API irá
-apresentar o Título, Imagem, Preço e irá utilizar o ID do produto para formatar
-o link que ele irá acessar. Quando existir um review para o produto, o mesmo
-será exibido por este dispositivo. Não é necessário criar um frontend para
-simular essa renderização (foque no desenvolvimento da API).
-
-"""
 
 
 class WishlistViewSet(ModelViewSet):
     queryset = Wishlist.objects.all()
     serializer_class = WishlistSerializer
+    filter_backends = [filters.DjangoFilterBackend]
+    filterset_fields = {
+        'id': ['exact', 'in'],
+        'product_id': ['exact', 'in', 'icontains']
+    }
 
     def get_queryset(self):
         return self.queryset.filter(user=self.request.user)

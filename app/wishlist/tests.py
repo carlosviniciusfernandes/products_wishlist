@@ -124,6 +124,26 @@ class TestWishlist(APITestCase):
         # All wishlist items
         self.assertEqual(Wishlist.objects.all().count(), 3)
 
+    def test_get_user_wishlist_list_filtered_items(self, mock_get_product_data: Mock):
+        product_id = self.product_id
+        other_product_id = '6a512e6c-6627-d286-5d18-583558359ab6'
+        mock_get_product_data.return_value.__dict__ = {}
+
+        # Add item to test user wishlist
+        Wishlist.objects.create(user=self.user, product_id=product_id)
+        Wishlist.objects.create(user=self.user, product_id=other_product_id)
+
+        # TODO create subtest for the different lookup expression of the different fields
+        response = self.client.get(
+            '/wishlist?product_id__icontains=1bf0f365',
+            format='json',
+            **self.headers
+        )
+
+        self.assertEqual(response.status_code, 200)
+
+        # list has only the filtered wishlist item(s)
+        self.assertEqual(len(response.data), 1)
 
     def test_get_user_wishlist_item_success(self, mock_get_product_data: Mock):
         product_id = self.product_id

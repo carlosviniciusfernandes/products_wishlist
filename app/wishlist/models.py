@@ -21,6 +21,7 @@ class Wishlist(models.Model):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        # TODO property at the moment is irrelevant, only benefit is product validation on init
         self._product_data = self._get_product_data(self.product_id)
 
     @property

@@ -2,4 +2,4 @@
 
 source venv/bin/activate
 
-python manage.py test "$@"
+python manage.py shell "$@"
