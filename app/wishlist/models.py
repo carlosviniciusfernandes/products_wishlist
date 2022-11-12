@@ -1,33 +1,11 @@
-from typing import Optional
-
 from django.conf import settings
 from django.db import models
-from luiza_labs.client import LuizaLabsClient
-from luiza_labs.models import Product
-
-PRODUCT_API = LuizaLabsClient()
+from product.models import Product
 
 
 class Wishlist(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    product_id = models.CharField(null=False, max_length=256)
-
-    _product_data: Optional[Product] = None
-
-    @staticmethod
-    def _get_product_data(product_id: str) -> Product:
-        return PRODUCT_API.retrieve_product_details(product_id)
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        # TODO property at the moment is irrelevant, only benefit is product validation on init
-        self._product_data = self._get_product_data(self.product_id)
-
-    @property
-    def product_data(self):
-        return self._get_product_data(self.product_id)
-
+    product = models.ForeignKey(Product, on_delete=models.PROTECT)
     class Meta:
         db_table = 'wishlist'
-        unique_together = ['user', 'product_id']
+        unique_together = ['user', 'product']

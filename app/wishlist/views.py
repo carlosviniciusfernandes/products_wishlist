@@ -15,7 +15,9 @@ class WishlistViewSet(ModelViewSet):
     filter_backends = [filters.DjangoFilterBackend]
     filterset_fields = {
         'id': ['exact', 'in'],
-        'product_id': ['exact', 'in', 'icontains']
+        'product_id': ['exact', 'in'],
+        'product__title': ['exact', 'icontains'],
+        'product__reviewScore': ['exact', 'gte', 'lte']
     }
 
     def get_queryset(self):
@@ -23,8 +25,8 @@ class WishlistViewSet(ModelViewSet):
 
     def create(self, request):
         user = request.user
-        serializer: WishlistSerializer = self.get_serializer(
-            data={'user': user.id, 'product_id': request.data.get('product_id')}
+        serializer = self.get_serializer(
+            data={'user': user.id, 'product': request.data.get('product_id')}
         )
         serializer.is_valid(raise_exception=True)
         serializer.create(serializer.validated_data)

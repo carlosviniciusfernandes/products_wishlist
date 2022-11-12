@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'django_filters',
     'dj_rest_auth',
     'wishlist',
-    'luiza_labs'
+    'luiza_labs',
+    'product'
 ]
 
 MIDDLEWARE = [
