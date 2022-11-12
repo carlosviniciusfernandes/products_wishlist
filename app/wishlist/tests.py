@@ -124,7 +124,7 @@ class TestWishlist(APITestCase):
         # All wishlist items
         self.assertEqual(Wishlist.objects.all().count(), 3)
 
-    def test_get_user_wishlist_list_filtered_items(self, mock_get_product_data: Mock):
+    def test_get_user_wishlist__list_filtered_items(self, mock_get_product_data: Mock):
         product_id = self.product_id
         other_product_id = '6a512e6c-6627-d286-5d18-583558359ab6'
         mock_get_product_data.return_value.__dict__ = {}

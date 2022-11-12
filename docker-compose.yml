@@ -17,7 +17,7 @@ services:
     container_name: app
     image: python:3.10
     working_dir: /app
-    entrypoint:  ["bash", "start.sh"]
+    entrypoint:  ["./scripts/start"]
     volumes:
       - ./app:/app
     restart: unless-stopped

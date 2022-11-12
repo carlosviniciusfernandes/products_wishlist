@@ -1,11 +1,16 @@
-python --version
+#!/bin/bash
 
+python --version
 echo 'Creating python virtual enviroment...'
+cd /app
 python -m venv venv
 source venv/bin/activate
 
 echo 'Installing required packages...'
 pip install -r requirements.txt
+
+echo 'Adding scripts to path...'
+echo 'export PATH=$PATH:/app/scripts' >> ~/.bashrc
 
 echo 'Starting Django server...'
 python manage.py runserver 0.0.0.0:8000
