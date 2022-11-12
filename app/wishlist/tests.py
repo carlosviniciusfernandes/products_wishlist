@@ -1,10 +1,8 @@
-from unittest.mock import Mock, patch
-
 from django.contrib.auth import get_user_model
+from product.models import Product
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient, APITestCase
 from wishlist.models import Wishlist
-from product.models import Product
 
 User = get_user_model()
 
