@@ -183,7 +183,7 @@ class TestWishlist(APITestCase):
         }
 
         self.assertEqual(response.status_code, 200)
-        self.assertDictContainsSubset(expected_data, response.data)
+        self.assertTrue(expected_data.items() <= response.data.items())
 
     def test_get_user_wishlist_item_error__not_found(self):
         other_user = create_test_user('other_test_user')

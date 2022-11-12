@@ -1,8 +1,6 @@
-from rest_framework.serializers import (ModelSerializer, CharField,
-                                        UniqueTogetherValidator)
-
-from wishlist.models import Wishlist
 from product.serializers import ProductSerializer
+from rest_framework.serializers import ModelSerializer, UniqueTogetherValidator
+from wishlist.models import Wishlist
 
 
 class WishlistSerializer(ModelSerializer):

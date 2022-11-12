@@ -10,7 +10,8 @@ django-filter
 # Django Rest Auth
 dj-rest-auth
 
-# Lyting and debugging
+# Test, Lyting and debugging
+pytest-django
 pylama
 ptvsd
 ipython
