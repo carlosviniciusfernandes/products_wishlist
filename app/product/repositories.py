@@ -19,17 +19,17 @@ class InvalidProductId(Exception):
     pass
 
 
-class ProductRepotory:
+class ProductRepository:
     luiza_client = LuizaLabsClient()
     product_dao = ProductManager
 
     @classmethod
     def _get_product_by_id(cls, id, source='external')-> Product:
         get_from={
-            'external': cls.luiza_client.retrieve_product_details(id).__dict__,
-            'internal': ProductSerializer(cls.product_dao.get(id=id)).data
+            'external': lambda id: cls.luiza_client.retrieve_product_details(id).__dict__,
+            'internal': lambda id: ProductSerializer(cls.product_dao.get(id=id)).data
         }
-        return get_from[source]
+        return get_from[source](id)
 
     @classmethod
     def get_by_id(cls, id: str)-> Product:
