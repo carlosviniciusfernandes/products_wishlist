@@ -1,14 +1,14 @@
 from rest_framework.exceptions import ValidationError
 from rest_framework.serializers import ModelSerializer, UniqueTogetherValidator
 from wishlist.models import Wishlist
-from product.repositories import ProductRepotory
+from product.repositories import ProductRepository
 
 
 class WishlistSerializer(ModelSerializer):
 
     def validate_product_id(self, value):
         try:
-            return ProductRepotory.get_by_id(value).get('id')
+            return ProductRepository.get_by_id(value).get('id')
         except Exception as e:
             raise ValidationError(str(e))
 
@@ -16,7 +16,7 @@ class WishlistSerializer(ModelSerializer):
         return {
             'id': instance.id,
             'product_id': str(instance.product_id),
-            'product':  ProductRepotory.get_by_id(instance.product_id)
+            'product':  ProductRepository.get_by_id(instance.product_id)
         }
     class Meta:
         model = Wishlist

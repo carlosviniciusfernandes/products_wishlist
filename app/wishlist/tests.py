@@ -5,7 +5,7 @@ from product.models import Product
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient, APITestCase
 from wishlist.models import Wishlist
-from wishlist.serializers import ProductRepotory
+from wishlist.serializers import ProductRepository
 
 User = get_user_model()
 
@@ -23,7 +23,7 @@ def get_user_token(user: User) -> Token.key:
     return f"Token {token.key}"
 
 
-@patch.object(ProductRepotory, 'get_by_id')
+@patch.object(ProductRepository, 'get_by_id')
 class TestWishlist(APITestCase):
 
     @classmethod
