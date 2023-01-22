@@ -5,6 +5,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
+    """ This migration decouples the Wishlist model from Product model
+        in order to migrate Product to a external service.
+
+        see commit for referece:
+        https://github.com/carlosviniciusfernandes/products_wishlist/commit/260e5ceb8fa8287fd22b8c024a6779bd81a13f88
+
+        NOTE: To revert, it is necessary to rollback the commit
+    """
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),

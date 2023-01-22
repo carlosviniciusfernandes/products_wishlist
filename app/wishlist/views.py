@@ -1,6 +1,5 @@
 from django.contrib.auth import get_user_model
 from rest_framework import status
-from django_filters import rest_framework as filters
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from wishlist.models import Wishlist
@@ -12,13 +11,6 @@ User = get_user_model()
 class WishlistViewSet(ModelViewSet):
     queryset = Wishlist.objects.all()
     serializer_class = WishlistSerializer
-    filter_backends = [filters.DjangoFilterBackend]
-    filterset_fields = {
-        'id': ['exact', 'in'],
-        # 'product_id': ['exact', 'in'],
-        # 'product__title': ['exact', 'icontains'],
-        # 'product__reviewScore': ['exact', 'gte', 'lte']
-    }
 
     def get_queryset(self):
         return self.queryset.filter(user=self.request.user)
@@ -26,7 +18,6 @@ class WishlistViewSet(ModelViewSet):
     def create(self, request):
         user = request.user
         serializer = self.get_serializer(
-            # data={'user': user.id, 'product': request.data.get('product_id')}
             data={'user': user.id, 'product_id': request.data.get('product_id')}
         )
         serializer.is_valid(raise_exception=True)

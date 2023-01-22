@@ -27,7 +27,6 @@ class WishlistSerializer(ModelSerializer):
         validators = [
             UniqueTogetherValidator(
                 queryset=model.objects.all(),
-                # fields=('user', 'product'),
                 fields=('user', 'product_id'),
                 message="User already have a wishlist item with this product id."
             )
