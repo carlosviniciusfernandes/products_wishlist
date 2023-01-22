@@ -1,5 +1,6 @@
 from typing import TypedDict, Optional
 
+from django_root.settings import PRODUCT_APP_SOURCE
 from luiza_labs.client import LuizaLabsClient, ClientError
 
 from .models import ProductManager
@@ -34,6 +35,6 @@ class ProductRepository:
     @classmethod
     def get_by_id(cls, id: str)-> Product:
         try:
-            return cls._get_product_by_id(id, source='external')
+            return cls._get_product_by_id(id, source=PRODUCT_APP_SOURCE)
         except ClientError as e:
             raise InvalidProductId(f'Invalid id for product: {e}')

@@ -28,9 +28,7 @@ class TestWishlist(APITestCase):
 
     @classmethod
     def setUpTestData(cls):
-        cls.product_id = '1bf0f365-fbdd-4e21-9786-da459d78dd1f'
         cls.product = dict(**{
-        # Product.objects.create(**{
             "price": 1699.0,
             "image": "http://challenge-api.luizalabs.com/images/1bf0f365-fbdd-4e21-9786-da459d78dd1f.jpg",
             "brand": "bébé confort",
@@ -38,23 +36,9 @@ class TestWishlist(APITestCase):
             "title": "Cadeira para Auto Iseos Bébé Confort Earth Brown",
             "reviewScore": 3.98
         })
+        cls.product_id = '1bf0f365-fbdd-4e21-9786-da459d78dd1f'
         cls.other_product_id = '6a512e6c-6627-d286-5d18-583558359ab6'
-        Product.objects.create(**{
-            "price": 1149.0,
-            "image": "http://challenge-api.luizalabs.com/images/6a512e6c-6627-d286-5d18-583558359ab6.jpg",
-            "brand": "bébé confort",
-            "id": "6a512e6c-6627-d286-5d18-583558359ab6",
-            "title": "Moisés Dorel Windoo 1529",
-            "reviewScore": 4.98
-        })
         cls.another_product_id = '4bd442b1-4a7d-2475-be97-a7b22a08a024'
-        Product.objects.create(**{
-            "price": 1999.0,
-            "image": "http://challenge-api.luizalabs.com/images/4bd442b1-4a7d-2475-be97-a7b22a08a024.jpg",
-            "brand": "bébé confort",
-            "id": "4bd442b1-4a7d-2475-be97-a7b22a08a024",
-            "title": "Cadeira para Auto Axiss Bébé Confort Robin Red"
-        })
 
     @classmethod
     def setUpClass(cls):
@@ -144,34 +128,6 @@ class TestWishlist(APITestCase):
 
         # All wishlist items
         self.assertEqual(Wishlist.objects.all().count(), 3)
-
-    # def test_get_user_wishlist__list_filtered_items(self, mock_get_product: Mock):
-    #     product_id = self.product_id
-    #     other_product_id = self.other_product_id
-    #     another_product_id = self.another_product_id
-
-    #     # Add item to test user wishlist
-    #     Wishlist.objects.create(user=self.user, product_id=product_id)
-    #     Wishlist.objects.create(user=self.user, product_id=other_product_id)
-    #     Wishlist.objects.create(user=self.user, product_id=another_product_id)
-
-    #     for case, result in {
-    #         f'product_id={product_id}': [product_id],
-    #         f'product_id__in={product_id},{another_product_id}': [product_id, another_product_id],
-    #         'product__reviewScore__lte=4': [product_id],
-    #         'product__reviewScore__gte=4': [other_product_id],
-    #         'product__title__icontains=Robin Red': [another_product_id]
-    #     }.items():
-    #         with self.subTest(case):
-    #             response = self.client.get(
-    #                 f'/wishlist?{case}',
-    #                 format='json',
-    #                 **self.headers
-    #             )
-
-    #             # list has only the filtered wishlist item(s)
-    #             self.assertEqual(response.status_code, 200)
-    #             self.assertEqual([item.get('product_id') for item in response.data], result)
 
     def test_get_user_wishlist_item_success(self, mock_get_product: Mock):
         product_id = self.product_id

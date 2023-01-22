@@ -46,6 +46,8 @@ INSTALLED_APPS = [
     'product'
 ]
 
+PRODUCT_APP_SOURCE = 'external' # ['internal', 'external']
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
